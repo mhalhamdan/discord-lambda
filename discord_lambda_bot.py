@@ -51,8 +51,15 @@ async def on_message(message: Message) -> None:
                 if len(msg) != 3:
                     await message.channel.send(f'command **DEPLOY** correct format is **<-fn> <deploy> <function name>**. Example: -fn deploy bur3i')
                     return
+                # Check an attachment was provided
+                if len(message.attachments) != 1:
+                    await message.channel.send(f'Please provide one zip folder as an attachment that includes requirements.txt and a python file')
+                    return
                 # Deploy function
-
+                zip_folder = BytesIO()
+                funcname = msg[2]
+                await message.attachments[0].save(zip_folder)
+                await FunctionManager.deploy_function(funcname, zip_folder)
             # Exit processing this message
             return
     # Send that the command is not valid
