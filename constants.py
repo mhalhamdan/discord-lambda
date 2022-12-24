@@ -1,0 +1,1 @@
+VALID_COMMANDS = ["create", "deploy", "run", "rename", "delete"]

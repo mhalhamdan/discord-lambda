@@ -1,3 +1,7 @@
 .files
 functions/test_function.py
 credentials.py
+.DS_Store
+text.txt
+text.txt.zip
+__pycache__
