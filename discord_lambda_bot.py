@@ -42,11 +42,11 @@ async def on_message(message: Message) -> None:
                     await message.channel.send(f'command **CREATE** correct format is **<-fn> <create> <function name>**. Example: -fn create bur3i')
                     return
                 # Create function
-                funcname = msg[2]
-                function_manager.create_function(funcname)
-                await message.channel.send(f'function {funcname} created')
+                func_name = msg[2]
+                function_manager.create_function(func_name)
+                await message.channel.send(f'function {func_name} created')
             # Process deploy
-            if command == 'deploy':
+            elif command == 'deploy':
                 # Check if message is the correct length
                 if len(msg) != 3:
                     await message.channel.send(f'command **DEPLOY** correct format is **<-fn> <deploy> <function name>**. Example: -fn deploy bur3i')
@@ -57,9 +57,38 @@ async def on_message(message: Message) -> None:
                     return
                 # Deploy function
                 zip_folder = BytesIO()
-                funcname = msg[2]
+                func_name = msg[2]
                 await message.attachments[0].save(zip_folder)
-                await FunctionManager.deploy_function(funcname, zip_folder)
+                await FunctionManager.deploy_function(func_name, zip_folder)
+            # Process rename
+            elif command == 'rename':
+                # Check if message is the correct length
+                if len(msg) != 4:
+                    await message.channel.send(f'command **RENAME** correct format is **<-fn> <rename> <old function name> <new function name>**. Example: -fn rename bur3i yessir')
+                    return
+                # Rename function
+                old_func_name = msg[2]
+                new_func_name = msg[3]
+                await FunctionManager.rename_function(old_func_name, new_func_name)
+            # Process delete
+            elif command == 'delete':
+                # Check if message is the correct length
+                if len(msg) != 3:
+                    await message.channel.send(f'command **DELETE** correct format is **<-fn> <delete> <function name>**. Example: -fn delete bur3i')
+                    return
+                # Delete function
+                func_name = msg[2]
+                await FunctionManager.delete_function(func_name)
+            # Process run
+            elif command == 'run':
+                # Check if message is the correct length
+                if len(msg) > 3:
+                    await message.channel.send(f'command **run** correct format is **<-fn> <run> <function name> <arg1> <arg2> ...**. Example: -fn run add 3 5 98 1')
+                    return
+                # Run function
+                func_name = msg[2]
+                args = msg[3:]
+                await FunctionManager.run_function(func_name, args)
             # Exit processing this message
             return
     # Send that the command is not valid
