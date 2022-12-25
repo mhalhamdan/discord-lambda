@@ -41,8 +41,8 @@ class FunctionManager(object):
 
         comma_delimited_args = ",".join(args)
         command_statement = f"from {os.path.basename(self.FUNCTIONS_ROOT_DIR)}.{function_name}.{function_name} import main; print(main({comma_delimited_args}))"
-        args = ["python3", "-c", command_statement]
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd = ["python3", "-c", command_statement]
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         return stdout.decode()
 

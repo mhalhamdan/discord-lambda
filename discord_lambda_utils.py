@@ -5,20 +5,17 @@ from constants import *
 
 
 def parse_message(message: Message) -> tuple:
-    # Lower the message content
-    message.content = message.content.lower()
-
-    msg = message.content.split()
+    tokens = message.content.split()
 
     # Check if the command is valid
     try:
-        command = msg[COMMAND_INDEX]
+        command = tokens[COMMAND_INDEX]
     except IndexError:
         raise ValueError(f"No command was provided. Please use one of these commands {VALID_COMMANDS}.'")
     if not command in VALID_COMMANDS:
         raise ValueError(f'command **{command}** not valid. Please use one of these commands {VALID_COMMANDS}.')
 
-    return msg, command
+    return tokens, command
 
 
 async def execute_command(function_manager: FunctionManager, command: str, tokens: list, attachments: list = None) -> str:
@@ -75,7 +72,7 @@ def validate_args(command: str, msg_size: int) -> None:
             raise ValueError(message)
 
     elif command == 'run':
-        if not msg_size > RUN_MIN_ARG_SIZE:
+        if not msg_size >= RUN_MIN_ARG_SIZE:
             message = 'command **run** correct format is **<-fn> <run> <function name> <arg1> <arg2> ...**. Example: -fn run add 3 5 98 1'
             raise ValueError(message)
  
