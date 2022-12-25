@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 from io import BytesIO
 from zipfile import ZipFile
 
@@ -10,12 +11,14 @@ class FunctionManager(object):
         if not os.path.isdir(FUNCTIONS_ROOT_DIR):
             os.mkdir(self.FUNCTIONS_ROOT_DIR)
 
+
     def create_function(self, function_name: str) -> None:
         function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, function_name)
         if os.path.isdir(function_path):
             raise FileExistsError(f"Function {function_name} already exists.")
 
         os.mkdir(function_path)
+
 
     def deploy_function(self, function_name: str, zip_folder: BytesIO) -> None:
         function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, function_name)
@@ -30,9 +33,20 @@ class FunctionManager(object):
         with ZipFile(zip_folder, 'r') as zip_object:
             zip_object.extractall(function_path)
 
-    def run_function(self, function_name: str) -> None:
-        pass
-    
+
+    def run_function(self, function_name: str, args: list) -> None:
+        function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, function_name)
+        if not os.path.isdir(function_path):
+            raise FileNotFoundError(f"Function {function_name} does not exist.")
+
+        comma_delimited_args = ",".join(args)
+        command_statement = f"from {os.path.basename(self.FUNCTIONS_ROOT_DIR)}.{function_name}.{function_name} import main; print(main({comma_delimited_args}))"
+        args = ["python3", "-c", command_statement]
+        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        return stdout.decode()
+
+
     def rename_function(self, function_name: str, new_function_name: str) -> None:
         # Check if old path actually exists
         function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, function_name)

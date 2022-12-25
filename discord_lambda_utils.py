@@ -75,7 +75,7 @@ def validate_args(command: str, msg_size: int) -> None:
             raise ValueError(message)
 
     elif command == 'run':
-        if msg_size > RUN_MIN_ARG_SIZE:
+        if not msg_size > RUN_MIN_ARG_SIZE:
             message = 'command **run** correct format is **<-fn> <run> <function name> <arg1> <arg2> ...**. Example: -fn run add 3 5 98 1'
             raise ValueError(message)
  

@@ -13,6 +13,7 @@ client = discord.Client(intents=Intents.all())
 # Create instance of the function manager
 function_manager = FunctionManager()
 
+
 async def handle_message(message: Message) -> str:
     tokens, command = parse_message(message)
 
@@ -20,10 +21,12 @@ async def handle_message(message: Message) -> str:
 
     return await execute_command(function_manager, command, tokens, message.attachments)
 
+
 # Log that the bot connected
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
+
 
 # Process messages and commands
 @client.event
@@ -42,7 +45,6 @@ async def on_message(message: Message) -> None:
 
     try:
         response = await handle_message(message)
-        print(response)
         await message.channel.send(response)
     except (ValueError, FileExistsError, FileNotFoundError) as err:
         await message.channel.send(err)
@@ -51,5 +53,6 @@ async def on_message(message: Message) -> None:
         logging.error(err)
 
     return
+
 
 client.run(LambdaBot)
