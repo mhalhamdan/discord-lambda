@@ -1,4 +1,7 @@
 import os
+import shutil
+from io import BytesIO
+from zipfile import ZipFile
 
 class FunctionManager(object):
     def __init__(self, FUNCTIONS_ROOT_DIR="functions") -> None:
@@ -14,8 +17,18 @@ class FunctionManager(object):
 
         os.mkdir(function_path)
 
-    def deploy_function(self, function_name: str, zip_folder: str) -> None:
-        pass
+    def deploy_function(self, function_name: str, zip_folder: BytesIO) -> None:
+        function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, function_name)
+        if not os.path.isdir(function_path):
+            raise FileNotFoundError(f"Function {function_name} does not exist.")
+        
+        # Delete existing folder to overwrite
+        shutil.rmtree(function_path)
+
+        os.mkdir(function_path)
+
+        with ZipFile(zip_folder, 'r') as zip_object:
+            zip_object.extractall(function_path)
 
     def run_function(self, function_name: str) -> None:
         pass

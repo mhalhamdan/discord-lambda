@@ -1,1 +1,14 @@
 VALID_COMMANDS = ["create", "deploy", "run", "rename", "delete"]
+BOT_COMMAND_PREFIX = "-fn"
+# Argument sizes
+CREATE_ARG_SIZE = 3
+DEPLOY_ARG_SIZE = 3
+RENAME_ARG_SIZE = 4
+DELETE_ARG_SIZE = 3
+RUN_MIN_ARG_SIZE = 3
+# Indexing 
+PREFIX_INDEX = 0
+COMMAND_INDEX = 1
+FUNCTION_NAME_INDEX = 2
+NEW_NAME_INDEX = 3
+RUN_ARGS_INDEX = 3
