@@ -34,10 +34,25 @@ class FunctionManager(object):
         pass
     
     def rename_function(self, function_name: str, new_function_name: str) -> None:
-        pass
+        # Check if old path actually exists
+        function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, function_name)
+        if not os.path.isdir(function_path):
+            raise FileNotFoundError(f"Function {function_name} does not exist.")
+
+        # Check if new path already exists
+        new_function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, new_function_name)
+        if os.path.isdir(new_function_path):
+            raise FileExistsError(f"Function {new_function_name} already exists.")
+
+        os.rename(function_path, new_function_path)
 
     def delete_function(self, function_name: str) -> None:
-        pass
+        function_path = os.path.join(self.FUNCTIONS_ROOT_DIR, function_name)
+        if not os.path.isdir(function_path):
+            raise FileNotFoundError(f"Function {function_name} does not exist.")
+        
+        shutil.rmtree(function_path)
+
 
 if __name__ == "__main__":
     pass

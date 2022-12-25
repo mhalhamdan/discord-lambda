@@ -1,7 +1,10 @@
-from discord import Message
+from io import BytesIO
+from discord import Message, Attachment
+from function_manager import FunctionManager
 from constants import *
 
-def handle_message(message: Message) -> tuple:
+
+def parse_message(message: Message) -> tuple:
     # Lower the message content
     message.content = message.content.lower()
 
@@ -16,7 +19,39 @@ def handle_message(message: Message) -> tuple:
         raise ValueError(f'command **{command}** not valid. Please use one of these commands {VALID_COMMANDS}.')
 
     return msg, command
-    
+
+
+async def execute_command(function_manager: FunctionManager, command: str, tokens: list, attachments: list = None) -> str:
+ # Retrieve function name after validating arguments
+    function_name = tokens[FUNCTION_NAME_INDEX]
+
+    if command == 'create':
+        function_manager.create_function(function_name)
+        return f'function {function_name} created successfully.'
+
+    elif command == 'deploy':
+        # Check an attachment was provided
+        if not attachments:
+            raise ValueError(f'Please provide one zip folder as an attachment that includes requirements.txt and a python file')
+        zip_folder = BytesIO()
+        await attachments[0].save(zip_folder)
+        function_manager.deploy_function(function_name, zip_folder)
+        return f'function {function_name} deployed successfully.'
+
+    elif command == 'rename':
+        new_func_name = tokens[NEW_NAME_INDEX]
+        function_manager.rename_function(function_name, new_func_name)
+        return f'function {function_name} renamed to {new_func_name} successfully.'
+
+    elif command == 'delete':
+        function_manager.delete_function(function_name)
+        return f'function {function_name} deleted successfully.'
+
+    elif command == 'run':
+        args = tokens[RUN_ARGS_INDEX:]
+        output = function_manager.run_function(function_name, args)
+        return f'Output of {function_name}: {output}'
+
 
 def validate_args(command: str, msg_size: int) -> None:
     if command == 'create':
